@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 from math import pow
 from mininet.topo import Topo
 from mininet.net import Mininet
@@ -13,7 +14,7 @@ class Tree(Topo):
     "linkopts - (1:core, 2:aggregation, 3: edge) parameters"
     "fanout - number of child switch per parent switch"
 
-    def __init__(self, linkopts1, linkopts2, linkopts3, fanout=2, **opts):
+    def __init__(self, fanout, **opts):
         # Initialize topology and default options
         Topo.__init__(self, **opts)
         # Adds core switches
@@ -42,16 +43,16 @@ class Tree(Topo):
     # Create links
     def createLinks(self, abovelabel, thislabel, fanout, level):
         for x in range(int(pow(fanout, level - 1))):
-            for y in range(fanout * x ,fanout * (x + 1)):
+            for y in range(fanout * x, fanout * (x + 1)):
                 aboveSwich = abovelabel + str(x)
                 thisSwitch = thislabel + str(y)
                 self.addLink(aboveSwich, thisSwitch)
 
 
 
-def perfTest():
+def perfTest(fanout=2):
     "Create network and run simple performance test"
-    topo = Tree(1, 2, 3)
+    topo = Tree(fanout)
     net = Mininet(topo=topo, host=CPULimitedHost, link=TCLink, cleanup=True)
     net.start()
     print "Dumping host connections"
@@ -64,5 +65,10 @@ def perfTest():
     net.stop()
 
 if __name__ == '__main__':
-    setLogLevel( 'info' )
-    perfTest()
+    setLogLevel('info')
+    # construct the argument parse and parse the arguments
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-f", "--fanout", required=True, help="fanout number")
+    args = vars(ap.parse_args())
+    fanout = int(args["fanout"])
+    perfTest(fanout)
