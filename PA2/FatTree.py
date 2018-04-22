@@ -8,6 +8,7 @@ from mininet.node import CPULimitedHost
 from mininet.link import TCLink
 from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel
+from time import sleep
 
 # Core switch is the first level of our tree architecture
 CORE_LEVEL = 0
@@ -77,7 +78,10 @@ def perfTest(alopts, elopts, hlopts, fanout):
     net.start()
 
     for switch in switchList:
-        net.getNodeByName(switch).sendCmd('ovs-vsctl set bridge s1 stp-enable=true')
+        net.getNodeByName(switch).sendCmd('ovs-vsctl set bridge ' + switch + ' stp-enable=true')
+
+    print "Waiting 1 minute before pinging to make sure nodes are created"
+    sleep(60)
 
     print "Dumping host connections"
     dumpNodeConnections(net.hosts)
