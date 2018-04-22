@@ -46,6 +46,7 @@ class FatTree(Topo):
 
         for x in range(n):
             self.addSwitch(label + str(x))
+            switchList.append(label + str(x)) 
 
     # Create hosts
     def createHosts(self, label, fanout, levels):
@@ -74,6 +75,10 @@ def perfTest(alopts, elopts, hlopts, fanout):
     topo = FatTree(alopts, elopts, hlopts, fanout)
     net = Mininet(topo=topo, host=CPULimitedHost, link=TCLink, cleanup=True)
     net.start()
+
+    for switch in switchList:
+        net.getNodeByName(switch).sendCmd('ovs-vsctl set bridge s1 stp-enable=true')
+
     print "Dumping host connections"
     dumpNodeConnections(net.hosts)
     print "Testing network connectivity"
@@ -102,6 +107,8 @@ if __name__ == '__main__':
     elopts = dict(bw=int(args["edgeLink"]))
     hlopts = dict(bw=int(args["hostLink"]))
     fanout = int(args["fanout"])
+
+    switchList = []
 
     if fanout % 2 == 0 and fanout <= 48:
         perfTest(alopts, elopts, hlopts, fanout)
