@@ -41,7 +41,7 @@ class FatTree(Topo):
     def createSwitches(self, label, fanout, level):
         if level == CORE_LEVEL:
             n = int(pow(fanout/2, 2))
-        else
+        else:
             n = int((fanout/2)*fanout)
 
         for x in range(n):
@@ -58,7 +58,7 @@ class FatTree(Topo):
             rangeAbove = int(pow(fanout/2, 2))
         elif level == HOST_LEVEL:
             rangeAbove = int(pow(fanout/2, 2) * fanout)
-        else
+        else:
             rangeAbove = int((fanout/2)*fanout)
 
         for x in range(int((fanout/2)*fanout)):
