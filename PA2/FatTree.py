@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
     # fanout argument
-    ap.add_argument("-f", "--fanout", default=2, required=False, help="fanout number")
+    ap.add_argument("-f", "--fanout", default=4, required=False, help="fanout number")
     # access link throughput argument
     ap.add_argument("-al", "--accessLink", default=20, required=False, help="access link throughput")
     # edge link throughput argument
@@ -102,4 +102,8 @@ if __name__ == '__main__':
     elopts = dict(bw=int(args["edgeLink"]))
     hlopts = dict(bw=int(args["hostLink"]))
     fanout = int(args["fanout"])
-    perfTest(alopts, elopts, hlopts, fanout)
+
+    if fanout % 2 == 0 and fanout <= 48:
+        perfTest(alopts, elopts, hlopts, fanout)
+    else:
+        print "Invalid fanout"
